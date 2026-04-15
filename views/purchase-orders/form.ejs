@@ -1,0 +1,214 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h4 class="mb-0"><i class="bi bi-file-earmark-plus me-2"></i>Buat Purchase Order</h4>
+  <a href="/purchase-orders" class="btn btn-outline-secondary">
+    <i class="bi bi-arrow-left me-1"></i>Kembali
+  </a>
+</div>
+
+<form id="poForm">
+  <div class="row">
+    <div class="col-lg-8">
+      <!-- Items -->
+      <div class="card mb-4">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+          <h6 class="mb-0">Item PO</h6>
+          <button type="button" class="btn btn-sm btn-primary" id="addItemBtn">
+            <i class="bi bi-plus-lg me-1"></i>Tambah Item
+          </button>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover mb-0" id="itemsTable">
+              <thead class="table-light">
+                <tr>
+                  <th width="40%">Produk</th>
+                  <th width="15%">Qty</th>
+                  <th width="20%">Harga</th>
+                  <th width="20%">Subtotal</th>
+                  <th width="5%"></th>
+                </tr>
+              </thead>
+              <tbody id="itemsBody">
+                <tr class="empty-row">
+                  <td colspan="5" class="text-center text-muted py-4">Belum ada item</td>
+                </tr>
+              </tbody>
+              <tfoot class="table-light">
+                <tr>
+                  <th colspan="3" class="text-end">Total:</th>
+                  <th id="grandTotal">Rp 0</th>
+                  <th></th>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-lg-4">
+      <!-- PO Info -->
+      <div class="card mb-4">
+        <div class="card-header bg-white">
+          <h6 class="mb-0">Informasi PO</h6>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label for="supplier_id" class="form-label">Supplier</label>
+            <select class="form-select" id="supplier_id" name="supplier_id">
+              <option value="">-- Pilih Supplier --</option>
+              <% suppliers.forEach(supplier => { %>
+                <option value="<%= supplier.id %>"><%= supplier.name %></option>
+              <% }) %>
+            </select>
+          </div>
+          
+          <div class="mb-3">
+            <label for="notes" class="form-label">Catatan</label>
+            <textarea class="form-control" id="notes" name="notes" rows="3" 
+              placeholder="Catatan tambahan..."></textarea>
+          </div>
+        </div>
+      </div>
+      
+      <button type="submit" class="btn btn-primary w-100 btn-lg">
+        <i class="bi bi-check-lg me-1"></i>Simpan PO
+      </button>
+    </div>
+  </div>
+</form>
+
+<!-- Item Row Template -->
+<template id="itemRowTemplate">
+  <tr class="item-row">
+    <td>
+      <select class="form-select form-select-sm product-select" required>
+        <option value="">Pilih Produk</option>
+        <% products.forEach(product => { %>
+          <option value="<%= product.id %>" data-price="<%= product.buy_price %>">
+            <%= product.name %> (<%= product.barcode || 'No Barcode' %>)
+          </option>
+        <% }) %>
+      </select>
+    </td>
+    <td>
+      <input type="number" class="form-control form-control-sm qty-input" min="1" value="1" required>
+    </td>
+    <td>
+      <input type="number" class="form-control form-control-sm price-input" min="0" value="0" required>
+    </td>
+    <td class="subtotal">Rp 0</td>
+    <td>
+      <button type="button" class="btn btn-sm btn-outline-danger remove-item">
+        <i class="bi bi-x"></i>
+      </button>
+    </td>
+  </tr>
+</template>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const itemsBody = document.getElementById('itemsBody');
+  const template = document.getElementById('itemRowTemplate');
+  let items = [];
+  
+  // Add item
+  document.getElementById('addItemBtn').addEventListener('click', function() {
+    const emptyRow = itemsBody.querySelector('.empty-row');
+    if (emptyRow) emptyRow.remove();
+    
+    const clone = template.content.cloneNode(true);
+    itemsBody.appendChild(clone);
+    
+    // Bind events to new row
+    const newRow = itemsBody.lastElementChild;
+    bindRowEvents(newRow);
+  });
+  
+  function bindRowEvents(row) {
+    const productSelect = row.querySelector('.product-select');
+    const qtyInput = row.querySelector('.qty-input');
+    const priceInput = row.querySelector('.price-input');
+    const removeBtn = row.querySelector('.remove-item');
+    
+    productSelect.addEventListener('change', function() {
+      const option = this.options[this.selectedIndex];
+      const price = option.dataset.price || 0;
+      priceInput.value = price;
+      calculateSubtotal(row);
+    });
+    
+    qtyInput.addEventListener('input', () => calculateSubtotal(row));
+    priceInput.addEventListener('input', () => calculateSubtotal(row));
+    
+    removeBtn.addEventListener('click', function() {
+      row.remove();
+      calculateGrandTotal();
+      if (itemsBody.children.length === 0) {
+        itemsBody.innerHTML = '<tr class="empty-row"><td colspan="5" class="text-center text-muted py-4">Belum ada item</td></tr>';
+      }
+    });
+  }
+  
+  function calculateSubtotal(row) {
+    const qty = parseInt(row.querySelector('.qty-input').value) || 0;
+    const price = parseFloat(row.querySelector('.price-input').value) || 0;
+    const subtotal = qty * price;
+    row.querySelector('.subtotal').textContent = 'Rp ' + subtotal.toLocaleString('id-ID');
+    calculateGrandTotal();
+  }
+  
+  function calculateGrandTotal() {
+    let total = 0;
+    document.querySelectorAll('.item-row').forEach(row => {
+      const qty = parseInt(row.querySelector('.qty-input').value) || 0;
+      const price = parseFloat(row.querySelector('.price-input').value) || 0;
+      total += qty * price;
+    });
+    document.getElementById('grandTotal').textContent = 'Rp ' + total.toLocaleString('id-ID');
+  }
+  
+  // Form submit
+  document.getElementById('poForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const items = [];
+    document.querySelectorAll('.item-row').forEach(row => {
+      const productId = row.querySelector('.product-select').value;
+      const qty = parseInt(row.querySelector('.qty-input').value) || 0;
+      const price = parseFloat(row.querySelector('.price-input').value) || 0;
+      
+      if (productId && qty > 0) {
+        items.push({ product_id: productId, qty, price });
+      }
+    });
+    
+    if (items.length === 0) {
+      Swal.fire('Error', 'Tambahkan minimal 1 item', 'error');
+      return;
+    }
+    
+    const formData = {
+      supplier_id: document.getElementById('supplier_id').value,
+      notes: document.getElementById('notes').value,
+      items
+    };
+    
+    try {
+      const response = await fetch('/purchase-orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+      
+      if (response.redirected) {
+        window.location.href = response.url;
+      } else {
+        window.location.href = '/purchase-orders';
+      }
+    } catch (error) {
+      Swal.fire('Error', 'Gagal menyimpan PO', 'error');
+    }
+  });
+});
+</script>

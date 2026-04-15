@@ -1,0 +1,180 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h4 class="mb-0">Dashboard</h4>
+  <span class="text-muted"><%= new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) %></span>
+</div>
+
+<!-- Stats Cards -->
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3">
+    <div class="card bg-primary text-white h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <h6 class="card-subtitle mb-2 opacity-75">Penjualan Hari Ini</h6>
+            <h3 class="mb-0">Rp <%= salesToday.total.toLocaleString('id-ID') %></h3>
+            <small><%= salesToday.count %> transaksi</small>
+          </div>
+          <i class="bi bi-cart-check fs-1 opacity-50"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-6 col-lg-3">
+    <div class="card bg-success text-white h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <h6 class="card-subtitle mb-2 opacity-75">Total Produk</h6>
+            <h3 class="mb-0"><%= totalProducts.count %></h3>
+            <small>produk terdaftar</small>
+          </div>
+          <i class="bi bi-box-seam fs-1 opacity-50"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-6 col-lg-3">
+    <div class="card bg-warning text-dark h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <h6 class="card-subtitle mb-2 opacity-75">Stok Menipis</h6>
+            <h3 class="mb-0"><%= lowStock.count %></h3>
+            <small>produk</small>
+          </div>
+          <i class="bi bi-exclamation-triangle fs-1 opacity-50"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-6 col-lg-3">
+    <div class="card bg-info text-white h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <h6 class="card-subtitle mb-2 opacity-75">PO Pending</h6>
+            <h3 class="mb-0"><%= pendingPOs.count %></h3>
+            <small>purchase order</small>
+          </div>
+          <i class="bi bi-file-earmark-text fs-1 opacity-50"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <!-- Recent Sales -->
+  <div class="col-lg-8">
+    <div class="card h-100">
+      <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h6 class="mb-0"><i class="bi bi-receipt me-2"></i>Transaksi Terakhir</h6>
+        <a href="/sales/history" class="btn btn-sm btn-outline-primary">Lihat Semua</a>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Invoice</th>
+                <th>Kasir</th>
+                <th class="text-end">Total</th>
+                <th>Waktu</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (recentSales.length === 0) { %>
+                <tr>
+                  <td colspan="4" class="text-center text-muted py-4">Belum ada transaksi hari ini</td>
+                </tr>
+              <% } else { %>
+                <% recentSales.forEach(sale => { %>
+                  <tr>
+                    <td>
+                      <a href="/sales/<%= sale.id %>" class="text-decoration-none">
+                        <%= sale.invoice_no %>
+                      </a>
+                    </td>
+                    <td><%= sale.user_name %></td>
+                    <td class="text-end">Rp <%= sale.total.toLocaleString('id-ID') %></td>
+                    <td><%= new Date(sale.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) %></td>
+                  </tr>
+                <% }) %>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Top Products Today -->
+  <div class="col-lg-4">
+    <div class="card h-100">
+      <div class="card-header bg-white">
+        <h6 class="mb-0"><i class="bi bi-star me-2"></i>Produk Terlaris Hari Ini</h6>
+      </div>
+      <div class="card-body p-0">
+        <ul class="list-group list-group-flush">
+          <% if (topProducts.length === 0) { %>
+            <li class="list-group-item text-center text-muted py-4">Belum ada penjualan hari ini</li>
+          <% } else { %>
+            <% topProducts.forEach((product, index) => { %>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                  <span class="badge bg-primary me-2"><%= index + 1 %></span>
+                  <%= product.name %>
+                </div>
+                <span class="badge bg-success rounded-pill"><%= product.total_qty %> terjual</span>
+              </li>
+            <% }) %>
+          <% } %>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row g-3 mt-3">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header bg-white">
+        <h6 class="mb-0"><i class="bi bi-lightning me-2"></i>Aksi Cepat</h6>
+      </div>
+      <div class="card-body">
+        <div class="row g-2">
+          <div class="col-6 col-md-3">
+            <a href="/sales/pos" class="btn btn-primary w-100 py-3">
+              <i class="bi bi-cart3 d-block fs-3 mb-1"></i>
+              Kasir (POS)
+            </a>
+          </div>
+          <% if (user && user.role === 'admin') { %>
+            <div class="col-6 col-md-3">
+              <a href="/products/create" class="btn btn-success w-100 py-3">
+                <i class="bi bi-plus-circle d-block fs-3 mb-1"></i>
+                Tambah Produk
+              </a>
+            </div>
+            <div class="col-6 col-md-3">
+              <a href="/purchase-orders/create" class="btn btn-info w-100 py-3 text-white">
+                <i class="bi bi-file-earmark-plus d-block fs-3 mb-1"></i>
+                Buat PO
+              </a>
+            </div>
+            <div class="col-6 col-md-3">
+              <a href="/reports/sales" class="btn btn-warning w-100 py-3">
+                <i class="bi bi-graph-up d-block fs-3 mb-1"></i>
+                Laporan
+              </a>
+            </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

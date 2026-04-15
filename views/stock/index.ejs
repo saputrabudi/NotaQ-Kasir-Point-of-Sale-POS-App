@@ -1,0 +1,127 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h4 class="mb-0"><i class="bi bi-boxes me-2"></i>Manajemen Stok</h4>
+  <a href="/stock/history" class="btn btn-outline-primary">
+    <i class="bi bi-clock-history me-1"></i>Riwayat Penyesuaian
+  </a>
+</div>
+
+<!-- Summary Cards -->
+<div class="row g-3 mb-4">
+  <div class="col-md-4">
+    <div class="card bg-primary text-white">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="mb-1">Total Produk</h6>
+            <h3 class="mb-0"><%= summary.total %></h3>
+          </div>
+          <i class="bi bi-box-seam fs-1 opacity-50"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card bg-warning text-dark">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="mb-1">Stok Menipis</h6>
+            <h3 class="mb-0"><%= summary.low_stock %></h3>
+          </div>
+          <i class="bi bi-exclamation-triangle fs-1 opacity-50"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card bg-danger text-white">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="mb-1">Stok Habis</h6>
+            <h3 class="mb-0"><%= summary.out_of_stock %></h3>
+          </div>
+          <i class="bi bi-x-circle fs-1 opacity-50"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Filter -->
+<div class="card mb-4">
+  <div class="card-body">
+    <form action="/stock" method="GET" class="row g-2">
+      <div class="col-md-6">
+        <div class="input-group">
+          <span class="input-group-text"><i class="bi bi-search"></i></span>
+          <input type="text" class="form-control" name="search" placeholder="Cari produk..." value="<%= search %>">
+        </div>
+      </div>
+      <div class="col-md-4">
+        <select name="filter" class="form-select">
+          <option value="" <%= !filter ? 'selected' : '' %>>Semua Produk</option>
+          <option value="low" <%= filter === 'low' ? 'selected' : '' %>>Stok Menipis</option>
+          <option value="out" <%= filter === 'out' ? 'selected' : '' %>>Stok Habis</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <button type="submit" class="btn btn-secondary w-100">Filter</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Stock Table -->
+<div class="card">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>Barcode</th>
+            <th>Nama Produk</th>
+            <th>Kategori</th>
+            <th class="text-center">Stok</th>
+            <th class="text-center">Min. Stok</th>
+            <th class="text-center">Status</th>
+            <th class="text-center">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (products.length === 0) { %>
+            <tr>
+              <td colspan="7" class="text-center text-muted py-4">Tidak ada produk ditemukan</td>
+            </tr>
+          <% } else { %>
+            <% products.forEach(product => { %>
+              <tr>
+                <td><code><%= product.barcode || '-' %></code></td>
+                <td><%= product.name %></td>
+                <td><%= product.category_name || '-' %></td>
+                <td class="text-center">
+                  <strong><%= product.stock %></strong>
+                </td>
+                <td class="text-center"><%= product.min_stock %></td>
+                <td class="text-center">
+                  <% if (product.stock <= 0) { %>
+                    <span class="badge bg-danger">Habis</span>
+                  <% } else if (product.stock <= product.min_stock) { %>
+                    <span class="badge bg-warning text-dark">Menipis</span>
+                  <% } else { %>
+                    <span class="badge bg-success">Aman</span>
+                  <% } %>
+                </td>
+                <td class="text-center">
+                  <a href="/stock/adjustment/<%= product.id %>" class="btn btn-sm btn-primary">
+                    <i class="bi bi-sliders me-1"></i>Sesuaikan
+                  </a>
+                </td>
+              </tr>
+            <% }) %>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

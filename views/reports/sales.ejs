@@ -1,0 +1,189 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h4 class="mb-0"><i class="bi bi-graph-up me-2"></i>Laporan Penjualan</h4>
+</div>
+
+<!-- Filter -->
+<div class="card mb-4">
+  <div class="card-body">
+    <form action="/reports/sales" method="GET" class="row g-2">
+      <div class="col-md-3">
+        <select name="period" class="form-select">
+          <option value="daily" <%= period === 'daily' ? 'selected' : '' %>>Harian</option>
+          <option value="weekly" <%= period === 'weekly' ? 'selected' : '' %>>Mingguan</option>
+          <option value="monthly" <%= period === 'monthly' ? 'selected' : '' %>>Bulanan</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <input type="date" class="form-control" name="date_from" value="<%= dateFrom %>">
+      </div>
+      <div class="col-md-3">
+        <input type="date" class="form-control" name="date_to" value="<%= dateTo %>">
+      </div>
+      <div class="col-md-3">
+        <button type="submit" class="btn btn-primary w-100">
+          <i class="bi bi-filter me-1"></i>Filter
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Summary Cards -->
+<div class="row g-3 mb-4">
+  <div class="col-md-4">
+    <div class="card bg-primary text-white h-100">
+      <div class="card-body text-center">
+        <h6>Total Transaksi</h6>
+        <h2><%= summary.total_transactions %></h2>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card bg-success text-white h-100">
+      <div class="card-body text-center">
+        <h6>Total Penjualan</h6>
+        <h2>Rp <%= Math.round(summary.total_sales).toLocaleString('id-ID') %></h2>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card bg-info text-white h-100">
+      <div class="card-body text-center">
+        <h6>Rata-rata Transaksi</h6>
+        <h2>Rp <%= Math.round(summary.avg_transaction).toLocaleString('id-ID') %></h2>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <!-- Sales by Period -->
+  <div class="col-lg-8">
+    <div class="card h-100">
+      <div class="card-header bg-white">
+        <h6 class="mb-0">Penjualan per Periode</h6>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Periode</th>
+                <th class="text-center">Transaksi</th>
+                <th class="text-end">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (salesByPeriod.length === 0) { %>
+                <tr>
+                  <td colspan="3" class="text-center text-muted py-4">Tidak ada data</td>
+                </tr>
+              <% } else { %>
+                <% salesByPeriod.forEach(row => { %>
+                  <tr>
+                    <td><%= row.period %></td>
+                    <td class="text-center"><%= row.transactions %></td>
+                    <td class="text-end">Rp <%= row.total.toLocaleString('id-ID') %></td>
+                  </tr>
+                <% }) %>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Top Products -->
+  <div class="col-lg-4">
+    <div class="card h-100">
+      <div class="card-header bg-white">
+        <h6 class="mb-0">Produk Terlaris</h6>
+      </div>
+      <div class="card-body p-0">
+        <ul class="list-group list-group-flush">
+          <% if (topProducts.length === 0) { %>
+            <li class="list-group-item text-center text-muted py-4">Tidak ada data</li>
+          <% } else { %>
+            <% topProducts.forEach((product, index) => { %>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                  <span class="badge bg-primary me-2"><%= index + 1 %></span>
+                  <%= product.name %>
+                </div>
+                <div class="text-end">
+                  <div><%= product.total_qty %> terjual</div>
+                  <small class="text-muted">Rp <%= product.total_sales.toLocaleString('id-ID') %></small>
+                </div>
+              </li>
+            <% }) %>
+          <% } %>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3 mt-3">
+  <!-- Sales by Payment Method -->
+  <div class="col-md-6">
+    <div class="card h-100">
+      <div class="card-header bg-white">
+        <h6 class="mb-0">Penjualan per Metode Bayar</h6>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Metode</th>
+                <th class="text-center">Transaksi</th>
+                <th class="text-end">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% salesByMethod.forEach(row => { %>
+                <tr>
+                  <td><%= row.payment_method === 'cash' ? 'Tunai' : row.payment_method %></td>
+                  <td class="text-center"><%= row.transactions %></td>
+                  <td class="text-end">Rp <%= row.total.toLocaleString('id-ID') %></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Sales by Cashier -->
+  <div class="col-md-6">
+    <div class="card h-100">
+      <div class="card-header bg-white">
+        <h6 class="mb-0">Penjualan per Kasir</h6>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Kasir</th>
+                <th class="text-center">Transaksi</th>
+                <th class="text-end">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% salesByCashier.forEach(row => { %>
+                <tr>
+                  <td><%= row.cashier_name %></td>
+                  <td class="text-center"><%= row.transactions %></td>
+                  <td class="text-end">Rp <%= row.total.toLocaleString('id-ID') %></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

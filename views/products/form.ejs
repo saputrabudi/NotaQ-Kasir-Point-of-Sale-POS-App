@@ -1,0 +1,136 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h4 class="mb-0">
+    <i class="bi bi-box-seam me-2"></i>
+    <%= product ? 'Edit Produk' : 'Tambah Produk' %>
+  </h4>
+  <a href="/products" class="btn btn-outline-secondary">
+    <i class="bi bi-arrow-left me-1"></i>Kembali
+  </a>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <form action="<%= product ? `/products/${product.id}?_method=PUT` : '/products' %>" method="POST">
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="barcode" class="form-label">Barcode</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-upc-scan"></i></span>
+            <input type="text" class="form-control" id="barcode" name="barcode" 
+              placeholder="Scan atau input barcode" 
+              value="<%= product ? product.barcode || '' : '' %>"
+              autofocus>
+          </div>
+          <small class="text-muted">Kosongkan jika tidak ada barcode</small>
+        </div>
+        
+        <div class="col-md-6 mb-3">
+          <label for="name" class="form-label">Nama Produk <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" id="name" name="name" 
+            placeholder="Nama produk" 
+            value="<%= product ? product.name : '' %>" required>
+        </div>
+        
+        <div class="col-md-6 mb-3">
+          <label for="category_id" class="form-label">Kategori</label>
+          <select class="form-select" id="category_id" name="category_id">
+            <option value="">-- Pilih Kategori --</option>
+            <% categories.forEach(cat => { %>
+              <option value="<%= cat.id %>" <%= product && product.category_id == cat.id ? 'selected' : '' %>>
+                <%= cat.name %>
+              </option>
+            <% }) %>
+          </select>
+        </div>
+        
+        <div class="col-md-6 mb-3">
+          <label for="buy_price" class="form-label">Harga Beli</label>
+          <div class="input-group">
+            <span class="input-group-text">Rp</span>
+            <input type="number" class="form-control" id="buy_price" name="buy_price" 
+              placeholder="0" min="0" step="100"
+              value="<%= product ? product.buy_price : 0 %>">
+          </div>
+        </div>
+        
+        <div class="col-md-6 mb-3">
+          <label for="sell_price" class="form-label">Harga Jual</label>
+          <div class="input-group">
+            <span class="input-group-text">Rp</span>
+            <input type="number" class="form-control" id="sell_price" name="sell_price" 
+              placeholder="0" min="0" step="100"
+              value="<%= product ? product.sell_price : 0 %>">
+          </div>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+          <label for="stock" class="form-label">Stok</label>
+          <input type="number" class="form-control" id="stock" name="stock" 
+            placeholder="0" min="0"
+            value="<%= product ? product.stock : 0 %>">
+        </div>
+        
+        <div class="col-md-3 mb-3">
+          <label for="min_stock" class="form-label">Stok Minimum</label>
+          <input type="number" class="form-control" id="min_stock" name="min_stock" 
+            placeholder="5" min="0"
+            value="<%= product ? product.min_stock : 5 %>">
+          <small class="text-muted">Alert jika stok di bawah ini</small>
+        </div>
+      </div>
+      
+      <hr>
+      
+      <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-check-lg me-1"></i>
+          <%= product ? 'Update' : 'Simpan' %>
+        </button>
+        <a href="/products" class="btn btn-outline-secondary">Batal</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Profit Calculator -->
+<div class="card mt-3">
+  <div class="card-header bg-white">
+    <h6 class="mb-0"><i class="bi bi-calculator me-2"></i>Kalkulator Margin</h6>
+  </div>
+  <div class="card-body">
+    <div class="row align-items-center">
+      <div class="col-md-4">
+        <label class="form-label">Margin</label>
+        <div class="input-group">
+          <span class="input-group-text">Rp</span>
+          <input type="text" class="form-control" id="margin" readonly>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Persentase</label>
+        <div class="input-group">
+          <input type="text" class="form-control" id="marginPercent" readonly>
+          <span class="input-group-text">%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function calculateMargin() {
+  const buyPrice = parseFloat(document.getElementById('buy_price').value) || 0;
+  const sellPrice = parseFloat(document.getElementById('sell_price').value) || 0;
+  const margin = sellPrice - buyPrice;
+  const marginPercent = buyPrice > 0 ? ((margin / buyPrice) * 100).toFixed(2) : 0;
+  
+  document.getElementById('margin').value = margin.toLocaleString('id-ID');
+  document.getElementById('marginPercent').value = marginPercent;
+}
+
+document.getElementById('buy_price').addEventListener('input', calculateMargin);
+document.getElementById('sell_price').addEventListener('input', calculateMargin);
+
+// Calculate on load
+calculateMargin();
+</script>

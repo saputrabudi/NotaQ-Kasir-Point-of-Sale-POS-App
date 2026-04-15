@@ -1,0 +1,90 @@
+<div class="container py-4">
+  <div class="row mb-4">
+    <div class="col-6">
+      <h4>PURCHASE ORDER</h4>
+      <h5 class="text-primary"><%= order.po_number %></h5>
+    </div>
+    <div class="col-6 text-end">
+      <h5>TOKO KASIR POS</h5>
+      <div>Jl. Contoh No. 123</div>
+      <div>Telp: 0812-3456-7890</div>
+    </div>
+  </div>
+  
+  <div class="row mb-4">
+    <div class="col-6">
+      <strong>Kepada:</strong><br>
+      <% if (order.supplier_name) { %>
+        <%= order.supplier_name %><br>
+        <% if (order.supplier_phone) { %>Telp: <%= order.supplier_phone %><br><% } %>
+        <% if (order.supplier_address) { %><%= order.supplier_address %><% } %>
+      <% } else { %>
+        -
+      <% } %>
+    </div>
+    <div class="col-6 text-end">
+      <strong>Tanggal:</strong> <%= new Date(order.created_at).toLocaleDateString('id-ID') %><br>
+      <strong>Status:</strong> 
+      <% if (order.status === 'draft') { %>
+        Draft
+      <% } else if (order.status === 'ordered') { %>
+        Ordered
+      <% } else if (order.status === 'received') { %>
+        Received
+      <% } else { %>
+        Cancelled
+      <% } %>
+    </div>
+  </div>
+  
+  <table class="table table-bordered">
+    <thead class="table-light">
+      <tr>
+        <th>No</th>
+        <th>Produk</th>
+        <th>Barcode</th>
+        <th class="text-center">Qty</th>
+        <th class="text-end">Harga</th>
+        <th class="text-end">Subtotal</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% items.forEach((item, index) => { %>
+        <tr>
+          <td><%= index + 1 %></td>
+          <td><%= item.product_name %></td>
+          <td><%= item.barcode || '-' %></td>
+          <td class="text-center"><%= item.qty %></td>
+          <td class="text-end">Rp <%= item.price.toLocaleString('id-ID') %></td>
+          <td class="text-end">Rp <%= item.subtotal.toLocaleString('id-ID') %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+    <tfoot>
+      <tr>
+        <th colspan="5" class="text-end">TOTAL:</th>
+        <th class="text-end">Rp <%= order.total.toLocaleString('id-ID') %></th>
+      </tr>
+    </tfoot>
+  </table>
+  
+  <% if (order.notes) { %>
+    <div class="mt-4">
+      <strong>Catatan:</strong><br>
+      <%= order.notes %>
+    </div>
+  <% } %>
+  
+  <div class="row mt-5">
+    <div class="col-6 text-center">
+      <div>Dibuat Oleh,</div>
+      <br><br><br>
+      <div><strong><%= order.user_name %></strong></div>
+    </div>
+    <div class="col-6 text-center">
+      <div>Mengetahui,</div>
+      <br><br><br>
+      <div><strong>________________</strong></div>
+    </div>
+  </div>
+</div>

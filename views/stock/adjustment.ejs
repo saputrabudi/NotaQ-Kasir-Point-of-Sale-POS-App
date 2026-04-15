@@ -1,0 +1,136 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h4 class="mb-0"><i class="bi bi-sliders me-2"></i>Penyesuaian Stok</h4>
+  <a href="/stock" class="btn btn-outline-secondary">
+    <i class="bi bi-arrow-left me-1"></i>Kembali
+  </a>
+</div>
+
+<div class="row">
+  <div class="col-lg-6">
+    <!-- Product Info -->
+    <div class="card mb-4">
+      <div class="card-header bg-white">
+        <h6 class="mb-0">Informasi Produk</h6>
+      </div>
+      <div class="card-body">
+        <table class="table table-borderless mb-0">
+          <tr>
+            <td width="120">Barcode</td>
+            <td><code><%= product.barcode || '-' %></code></td>
+          </tr>
+          <tr>
+            <td>Nama</td>
+            <td><strong><%= product.name %></strong></td>
+          </tr>
+          <tr>
+            <td>Kategori</td>
+            <td><%= product.category_name || '-' %></td>
+          </tr>
+          <tr>
+            <td>Stok Saat Ini</td>
+            <td>
+              <span class="badge bg-<%= product.stock <= 0 ? 'danger' : (product.stock <= product.min_stock ? 'warning' : 'success') %> fs-5">
+                <%= product.stock %>
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td>Stok Minimum</td>
+            <td><%= product.min_stock %></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    
+    <!-- Adjustment Form -->
+    <div class="card">
+      <div class="card-header bg-white">
+        <h6 class="mb-0">Form Penyesuaian</h6>
+      </div>
+      <div class="card-body">
+        <form action="/stock/adjustment/<%= product.id %>" method="POST">
+          <div class="mb-3">
+            <label class="form-label">Tipe Penyesuaian</label>
+            <div class="btn-group w-100" role="group">
+              <input type="radio" class="btn-check" name="adjustment_type" id="typeAdd" value="add" checked>
+              <label class="btn btn-outline-success" for="typeAdd">
+                <i class="bi bi-plus-lg me-1"></i>Tambah
+              </label>
+              
+              <input type="radio" class="btn-check" name="adjustment_type" id="typeSubtract" value="subtract">
+              <label class="btn btn-outline-danger" for="typeSubtract">
+                <i class="bi bi-dash-lg me-1"></i>Kurang
+              </label>
+              
+              <input type="radio" class="btn-check" name="adjustment_type" id="typeSet" value="set">
+              <label class="btn btn-outline-primary" for="typeSet">
+                <i class="bi bi-pencil me-1"></i>Set Nilai
+              </label>
+            </div>
+          </div>
+          
+          <div class="mb-3">
+            <label for="qty" class="form-label">Jumlah</label>
+            <input type="number" class="form-control form-control-lg" id="qty" name="qty" 
+              min="1" value="1" required>
+          </div>
+          
+          <div class="mb-3">
+            <label for="reason" class="form-label">Alasan (Opsional)</label>
+            <textarea class="form-control" id="reason" name="reason" rows="2" 
+              placeholder="Contoh: Stok opname, Barang rusak, dll"></textarea>
+          </div>
+          
+          <button type="submit" class="btn btn-primary w-100">
+            <i class="bi bi-check-lg me-1"></i>Simpan Penyesuaian
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-lg-6">
+    <!-- Adjustment History -->
+    <div class="card">
+      <div class="card-header bg-white">
+        <h6 class="mb-0">Riwayat Penyesuaian</h6>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-sm mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Tanggal</th>
+                <th>User</th>
+                <th class="text-center">Perubahan</th>
+                <th>Alasan</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (history.length === 0) { %>
+                <tr>
+                  <td colspan="4" class="text-center text-muted py-3">Belum ada riwayat</td>
+                </tr>
+              <% } else { %>
+                <% history.forEach(h => { %>
+                  <tr>
+                    <td><small><%= new Date(h.created_at).toLocaleString('id-ID') %></small></td>
+                    <td><%= h.user_name %></td>
+                    <td class="text-center">
+                      <span class="badge bg-<%= h.adjustment > 0 ? 'success' : 'danger' %>">
+                        <%= h.adjustment > 0 ? '+' : '' %><%= h.adjustment %>
+                      </span>
+                      <br>
+                      <small class="text-muted"><%= h.qty_before %> → <%= h.qty_after %></small>
+                    </td>
+                    <td><small><%= h.reason || '-' %></small></td>
+                  </tr>
+                <% }) %>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

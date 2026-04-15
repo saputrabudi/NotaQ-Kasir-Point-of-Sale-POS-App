@@ -1,0 +1,61 @@
+<div class="receipt">
+  <div class="receipt-header">
+    <div class="receipt-title">TOKO KASIR POS</div>
+    <div>Jl. Contoh No. 123</div>
+    <div>Telp: 0812-3456-7890</div>
+  </div>
+  
+  <div class="receipt-body">
+    <div class="d-flex justify-content-between">
+      <span>No:</span>
+      <span><%= sale.invoice_no %></span>
+    </div>
+    <div class="d-flex justify-content-between">
+      <span>Tanggal:</span>
+      <span><%= new Date(sale.created_at).toLocaleString('id-ID') %></span>
+    </div>
+    <div class="d-flex justify-content-between">
+      <span>Kasir:</span>
+      <span><%= sale.cashier_name %></span>
+    </div>
+    <div class="d-flex justify-content-between">
+      <span>Metode:</span>
+      <span><%= sale.payment_method === 'qris' ? 'QRIS' : 'Tunai' %></span>
+    </div>
+  </div>
+  
+  <hr style="border-style: dashed;">
+  
+  <div class="receipt-body">
+    <% items.forEach(item => { %>
+      <div class="mb-2">
+        <div><%= item.product_name %></div>
+        <div class="d-flex justify-content-between">
+          <span><%= item.qty %> x Rp <%= item.price.toLocaleString('id-ID') %></span>
+          <span>Rp <%= item.subtotal.toLocaleString('id-ID') %></span>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+  
+  <div class="receipt-total">
+    <div class="d-flex justify-content-between">
+      <strong>TOTAL:</strong>
+      <strong>Rp <%= sale.total.toLocaleString('id-ID') %></strong>
+    </div>
+    <div class="d-flex justify-content-between">
+      <span>Bayar:</span>
+      <span>Rp <%= sale.payment.toLocaleString('id-ID') %></span>
+    </div>
+    <div class="d-flex justify-content-between">
+      <span>Kembali:</span>
+      <span>Rp <%= sale.change_amount.toLocaleString('id-ID') %></span>
+    </div>
+  </div>
+  
+  <div class="receipt-footer">
+    <div>Terima Kasih</div>
+    <div>Barang yang sudah dibeli</div>
+    <div>tidak dapat dikembalikan</div>
+  </div>
+</div>

@@ -1,0 +1,351 @@
+/* ========== General ========== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f4f6f9;
+  min-height: 100vh;
+}
+
+/* ========== Auth Page ========== */
+.auth-page {
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.auth-container {
+  width: 100%;
+  max-width: 400px;
+}
+
+.auth-card {
+  border: none;
+  border-radius: 15px;
+}
+
+/* ========== Layout ========== */
+.wrapper {
+  display: flex;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ========== Sidebar ========== */
+.sidebar {
+  width: 250px;
+  background: linear-gradient(180deg, #2c3e50 0%, #1a252f 100%);
+  color: #fff;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  overflow-y: auto;
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+.sidebar-header {
+  padding: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-nav {
+  padding: 15px 0;
+}
+
+.sidebar-nav .nav-item {
+  margin: 2px 0;
+}
+
+.sidebar-nav .nav-link {
+  color: rgba(255, 255, 255, 0.7);
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border-left: 3px solid transparent;
+}
+
+.sidebar-nav .nav-link:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+  border-left-color: #3498db;
+}
+
+.sidebar-nav .nav-link.active {
+  color: #fff;
+  background: rgba(52, 152, 219, 0.2);
+  border-left-color: #3498db;
+}
+
+.sidebar-nav .nav-link i {
+  font-size: 1.1rem;
+  width: 24px;
+  text-align: center;
+}
+
+.nav-divider {
+  padding: 15px 20px 8px;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* ========== Main Content ========== */
+.main-content {
+  margin-left: 250px;
+  transition: all 0.3s ease;
+}
+
+/* Sidebar Hidden State (Desktop) */
+.sidebar.hidden {
+  transform: translateX(-100%);
+}
+
+body.sidebar-hidden .main-content {
+  margin-left: 0 !important;
+}
+
+/* ========== Navbar ========== */
+.navbar {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* ========== Cards ========== */
+.card {
+  border: none;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+}
+
+.card-header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* ========== Tables ========== */
+.table {
+  margin-bottom: 0;
+}
+
+.table th {
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.table td {
+  vertical-align: middle;
+}
+
+/* ========== Buttons ========== */
+.btn {
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+.btn-group-sm .btn {
+  padding: 0.35rem 0.6rem;
+}
+
+/* ========== Form Controls ========== */
+.form-control,
+.form-select {
+  border-radius: 8px;
+  border-color: #dee2e6;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.15);
+}
+
+/* ========== Badges ========== */
+.badge {
+  font-weight: 500;
+  padding: 0.4em 0.8em;
+}
+
+/* ========== Footer ========== */
+.footer {
+  margin-top: auto;
+}
+
+/* ========== POS Specific ========== */
+/* Category buttons - icon only, responsive grid horizontal */
+.category-btns {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.5rem;
+}
+
+.category-btn-icon {
+  width: 100%;
+  aspect-ratio: 1;
+  max-width: 3rem;
+  max-height: 3rem;
+  margin: 0 auto;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+}
+
+.category-btn-icon i {
+  font-size: 1.1rem;
+}
+
+@media (min-width: 400px) {
+  .category-btns {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+@media (min-width: 576px) {
+  .category-btns {
+    grid-template-columns: repeat(8, 1fr);
+    gap: 0.6rem;
+  }
+  .category-btn-icon {
+    max-width: 3.25rem;
+    max-height: 3.25rem;
+  }
+  .category-btn-icon i {
+    font-size: 1.25rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .category-btns {
+    grid-template-columns: repeat(10, 1fr);
+  }
+}
+
+@media (min-width: 992px) {
+  .category-btns {
+    grid-template-columns: repeat(auto-fill, minmax(3rem, 1fr));
+  }
+}
+
+.product-card {
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+}
+
+.product-card:hover {
+  border-color: #3498db;
+  transform: translateY(-2px);
+}
+
+.cart-item {
+  transition: all 0.2s ease;
+}
+
+.cart-item:hover {
+  background-color: #f8f9fa;
+}
+
+/* ========== Responsive ========== */
+@media (max-width: 991.98px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  
+  .sidebar.show {
+    transform: translateX(0);
+  }
+  
+  .main-content {
+    margin-left: 0;
+  }
+  
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+  }
+  
+  .sidebar-overlay.show {
+    display: block;
+  }
+}
+
+/* ========== Scrollbar ========== */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* ========== Animations ========== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease;
+}
+
+/* ========== Print Styles ========== */
+@media print {
+  .sidebar,
+  .navbar,
+  .footer,
+  .no-print {
+    display: none !important;
+  }
+  
+  .main-content {
+    margin-left: 0 !important;
+  }
+  
+  .card {
+    box-shadow: none !important;
+    border: 1px solid #ddd !important;
+  }
+}

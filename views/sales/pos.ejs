@@ -1,0 +1,137 @@
+<div class="row g-3">
+  <!-- Left: Product Selection -->
+  <div class="col-lg-7">
+    <div class="card h-100">
+      <div class="card-header bg-white">
+        <div class="row g-2">
+          <div class="col-md-6">
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-upc-scan"></i></span>
+              <input type="text" class="form-control" id="barcodeInput" 
+                placeholder="Scan barcode..." autofocus>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-search"></i></span>
+              <input type="text" class="form-control" id="searchInput" 
+                placeholder="Cari produk...">
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card-body">
+        <!-- Category Filter -->
+        <div class="mb-3">
+          <%
+            const categoryIcons = {
+              'Semua': 'fa-th-large',
+              'Makanan': 'fa-utensils',
+              'Minuman': 'fa-wine-bottle',
+              'Snack': 'fa-cookie-bite',
+              'Rokok': 'fa-smoking',
+              'Toiletries': 'fa-pump-soap',
+              'Lainnya': 'fa-boxes-stacked'
+            };
+            function getCategoryIcon(name) {
+              return categoryIcons[name] || 'fa-tag';
+            }
+          %>
+          <div class="category-btns">
+            <button type="button" class="btn btn-outline-primary category-btn category-btn-icon active" data-category="" title="Semua">
+              <i class="fa-solid fa-th-large"></i>
+            </button>
+            <% categories.forEach(cat => { %>
+              <button type="button" class="btn btn-outline-primary category-btn category-btn-icon" data-category="<%= cat.id %>" title="<%= cat.name %>">
+                <i class="fa-solid <%= getCategoryIcon(cat.name) %>"></i>
+              </button>
+            <% }) %>
+          </div>
+        </div>
+        
+        <!-- Product Grid -->
+        <div id="productGrid" class="row g-2">
+          <div class="col-12 text-center text-muted py-5">
+            <i class="bi bi-search fs-1"></i>
+            <p class="mt-2">Cari produk atau scan barcode</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Right: Cart -->
+  <div class="col-lg-5">
+    <div class="card h-100 d-flex flex-column">
+      <div class="card-header bg-primary text-white">
+        <h5 class="mb-0"><i class="bi bi-cart3 me-2"></i>Keranjang</h5>
+      </div>
+      
+      <div class="card-body flex-grow-1 overflow-auto" style="max-height: 400px;">
+        <div id="cartItems">
+          <div class="text-center text-muted py-5" id="emptyCart">
+            <i class="bi bi-cart fs-1"></i>
+            <p class="mt-2">Keranjang kosong</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card-footer bg-light">
+        <div class="d-flex justify-content-between mb-2">
+          <span>Subtotal:</span>
+          <span id="subtotal">Rp 0</span>
+        </div>
+        <div class="d-flex justify-content-between mb-3">
+          <strong class="fs-5">Total:</strong>
+          <strong class="fs-5 text-primary" id="total">Rp 0</strong>
+        </div>
+        
+        <div class="d-grid gap-2">
+          <button type="button" class="btn btn-success btn-lg" id="payBtn" disabled>
+            <i class="bi bi-cash-stack me-2"></i>Bayar
+          </button>
+          <button type="button" class="btn btn-outline-danger" id="clearBtn">
+            <i class="bi bi-trash me-2"></i>Kosongkan
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Product Card Template -->
+<template id="productCardTemplate">
+  <div class="col-6 col-md-4 col-lg-3">
+    <div class="card product-card h-100" style="cursor: pointer;">
+      <div class="card-body p-2 text-center">
+        <i class="bi bi-box fs-3 text-muted"></i>
+        <h6 class="card-title mb-1 product-name text-truncate" style="font-size: 0.85rem;"></h6>
+        <small class="text-muted product-barcode"></small>
+        <div class="product-price fw-bold text-primary mt-1"></div>
+        <small class="product-stock"></small>
+      </div>
+    </div>
+  </div>
+</template>
+
+<!-- Cart Item Template -->
+<template id="cartItemTemplate">
+  <div class="cart-item d-flex align-items-center border-bottom py-2">
+    <div class="flex-grow-1">
+      <div class="fw-bold item-name"></div>
+      <small class="text-muted item-price"></small>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <button class="btn btn-sm btn-outline-secondary qty-minus">-</button>
+      <span class="item-qty" style="min-width: 30px; text-align: center;"></span>
+      <button class="btn btn-sm btn-outline-secondary qty-plus">+</button>
+      <button class="btn btn-sm btn-outline-danger item-remove">
+        <i class="bi bi-x"></i>
+      </button>
+    </div>
+  </div>
+</template>
+
+<script src="/js/qris-utils.js"></script>
+<script src="/js/pos.js"></script>

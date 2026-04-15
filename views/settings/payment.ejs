@@ -1,0 +1,244 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h4 class="mb-0"><i class="bi bi-credit-card me-2"></i>Pengaturan Pembayaran</h4>
+</div>
+
+<div class="row">
+  <!-- QRIS Settings -->
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="fa-solid fa-qrcode me-2"></i>QRIS Payment</h5>
+        <% if (qrisSetting && qrisSetting.qris_string) { %>
+          <form action="/payment-settings/qris/toggle" method="POST" class="d-inline">
+            <button type="submit" class="btn btn-sm btn-<%= qrisSetting.is_active ? 'success' : 'secondary' %>">
+              <i class="fa-solid fa-<%= qrisSetting.is_active ? 'check' : 'times' %>"></i>
+              <%= qrisSetting.is_active ? 'Aktif' : 'Nonaktif' %>
+            </button>
+          </form>
+        <% } %>
+      </div>
+      <div class="card-body">
+        <!-- Scan QR dari Gambar -->
+        <div class="mb-4">
+          <h6 class="fw-bold">Scan QR dari Gambar</h6>
+          <p class="text-muted small">Upload gambar QR Code QRIS static dari merchant Anda</p>
+          
+          <div id="scan-area" class="<%= qrisSetting && qrisSetting.qris_string ? 'd-none' : '' %>">
+            <div id="reader" class="d-none"></div>
+            <label for="input-qr-image" class="btn btn-outline-primary btn-lg w-100">
+              <i class="fa-solid fa-image me-2"></i>Pilih Gambar QR
+            </label>
+            <input type="file" id="input-qr-image" accept="image/*" class="d-none">
+          </div>
+          
+          <div id="scan-result" class="d-none mt-3">
+            <div class="alert alert-success">
+              <i class="fa-solid fa-check-circle me-2"></i>QR Code berhasil di-scan!
+            </div>
+            <div class="bg-light p-3 rounded">
+              <small class="text-muted d-block mb-1">String QRIS:</small>
+              <pre id="extracted-string" class="mb-0" style="font-size: 0.75rem; max-height: 150px; overflow-y: auto;"></pre>
+            </div>
+            <div class="mt-3">
+              <button type="button" class="btn btn-success" id="btn-save-string">
+                <i class="fa-solid fa-save me-1"></i>Simpan QRIS
+              </button>
+              <button type="button" class="btn btn-outline-secondary" id="btn-rescan">
+                <i class="fa-solid fa-redo me-1"></i>Scan Ulang
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- QRIS Tersimpan -->
+        <% if (qrisSetting && qrisSetting.qris_string) { %>
+          <div class="alert alert-info">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <i class="fa-solid fa-check-circle me-2"></i>
+                <strong>QRIS Tersimpan</strong>
+                <div class="mt-2">
+                  <small class="text-muted d-block">String QRIS:</small>
+                  <pre class="mb-0" style="font-size: 0.7rem; max-height: 100px; overflow-y: auto;"><%= qrisSetting.qris_string.substring(0, 100) %>...</pre>
+                </div>
+              </div>
+              <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteQRIS()">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </div>
+          </div>
+          
+          <button type="button" class="btn btn-outline-primary" onclick="showScanArea()">
+            <i class="fa-solid fa-edit me-1"></i>Ganti QRIS
+          </button>
+        <% } %>
+
+        <!-- Manual Input (Optional) -->
+        <div class="mt-4">
+          <h6 class="fw-bold">Atau Input Manual</h6>
+          <form action="/payment-settings/qris" method="POST">
+            <div class="mb-3">
+              <label for="qris_string" class="form-label">QRIS String</label>
+              <textarea class="form-control font-monospace" id="qris_string" name="qris_string" rows="4" 
+                placeholder="Paste QRIS string di sini..." style="font-size: 0.85rem;"><%= qrisSetting ? qrisSetting.qris_string : '' %></textarea>
+              <small class="text-muted">Format harus dimulai dengan 00020101...</small>
+            </div>
+            <button type="submit" class="btn btn-primary">
+              <i class="fa-solid fa-save me-1"></i>Simpan
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Info -->
+  <div class="col-lg-4">
+    <div class="card bg-light">
+      <div class="card-body">
+        <h6 class="fw-bold"><i class="fa-solid fa-info-circle me-2"></i>Cara Penggunaan</h6>
+        <ol class="small mb-0">
+          <li class="mb-2">Dapatkan QR Code QRIS static dari provider Anda (bank/e-wallet)</li>
+          <li class="mb-2">Screenshot atau download gambar QR tersebut</li>
+          <li class="mb-2">Upload gambar QR di form di samping</li>
+          <li class="mb-2">Sistem akan otomatis scan dan extract string QRIS</li>
+          <li class="mb-2">Klik "Simpan QRIS" untuk menyimpan</li>
+          <li>Saat transaksi di POS, pilih "Bayar dengan QRIS" untuk generate QR dengan nominal</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="card mt-3">
+      <div class="card-body">
+        <h6 class="fw-bold text-warning"><i class="fa-solid fa-exclamation-triangle me-2"></i>Penting</h6>
+        <ul class="small mb-0">
+          <li>Gunakan QR Code QRIS yang valid</li>
+          <li>QR harus dalam format IDR (5303360)</li>
+          <li>Pastikan QR masih aktif dari provider</li>
+          <li>Jangan bagikan QR string ke orang lain</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Hidden form for delete -->
+<form id="deleteForm" action="/payment-settings/qris" method="POST" style="display: none;">
+  <input type="hidden" name="qris_string" value="">
+</form>
+
+<!-- QR Scanner Library -->
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script src="/js/qris-utils.js"></script>
+
+<script>
+let lastScannedString = '';
+
+function prepareScannedQRIS(raw) {
+  const normalized = typeof normalizeQRISString === 'function'
+    ? normalizeQRISString(raw)
+    : String(raw || '').trim().toUpperCase();
+
+  if (!normalized || !normalized.startsWith('000201')) {
+    return { ok: false, message: 'QR bukan format QRIS valid (000201...)' };
+  }
+
+  if (normalized.indexOf('5303360') === -1) {
+    return { ok: false, message: 'QRIS bukan mata uang IDR (tag 53=360 tidak ditemukan)' };
+  }
+
+  if (typeof isValidQRIS === 'function' && !isValidQRIS(normalized)) {
+    return { ok: false, message: 'CRC QRIS tidak valid. Gunakan gambar QR yang lebih jelas.' };
+  }
+
+  return { ok: true, value: normalized };
+}
+
+// Scan QR dari gambar
+document.getElementById('input-qr-image').addEventListener('change', function() {
+  const file = this.files && this.files[0];
+  if (!file) return;
+
+  document.getElementById('scan-result').classList.add('d-none');
+  
+  const scanner = new Html5Qrcode('reader');
+  scanner.scanFile(file, false)
+    .then(function(decodedText) {
+      const prepared = prepareScannedQRIS(decodedText);
+      if (!prepared.ok) {
+        Swal.fire('QRIS Tidak Valid', prepared.message, 'warning');
+        return;
+      }
+
+      lastScannedString = prepared.value;
+      document.getElementById('extracted-string').textContent = prepared.value;
+      document.getElementById('scan-area').classList.add('d-none');
+      document.getElementById('scan-result').classList.remove('d-none');
+    })
+    .catch(function(err) {
+      Swal.fire('Error', 'QR code tidak ditemukan di gambar. Coba gambar lain.', 'error');
+      console.warn(err);
+    })
+    .finally(function() {
+      document.getElementById('input-qr-image').value = '';
+    });
+});
+
+// Save QRIS
+document.getElementById('btn-save-string').addEventListener('click', function() {
+  if (!lastScannedString) {
+    Swal.fire('Error', 'Tidak ada data QRIS', 'error');
+    return;
+  }
+
+  const prepared = prepareScannedQRIS(lastScannedString);
+  if (!prepared.ok) {
+    Swal.fire('QRIS Tidak Valid', prepared.message, 'warning');
+    return;
+  }
+
+  // Submit form
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = '/payment-settings/qris';
+  
+  const input = document.createElement('input');
+  input.type = 'hidden';
+  input.name = 'qris_string';
+  input.value = prepared.value;
+  
+  form.appendChild(input);
+  document.body.appendChild(form);
+  form.submit();
+});
+
+// Rescan
+document.getElementById('btn-rescan').addEventListener('click', function() {
+  document.getElementById('scan-area').classList.remove('d-none');
+  document.getElementById('scan-result').classList.add('d-none');
+  lastScannedString = '';
+});
+
+// Show scan area
+function showScanArea() {
+  document.getElementById('scan-area').classList.remove('d-none');
+}
+
+// Delete QRIS
+function deleteQRIS() {
+  Swal.fire({
+    title: 'Hapus QRIS?',
+    text: 'Data QRIS akan dihapus. Anda harus scan ulang untuk menggunakan fitur ini.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#dc3545',
+    cancelButtonColor: '#6c757d',
+    confirmButtonText: 'Ya, Hapus!',
+    cancelButtonText: 'Batal'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      document.getElementById('deleteForm').submit();
+    }
+  });
+}
+</script>
