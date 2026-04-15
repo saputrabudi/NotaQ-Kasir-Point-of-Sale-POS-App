@@ -5,8 +5,8 @@
 
 ---
 
-<!-- Ganti gambar di bawah dengan screenshot aplikasi Anda -->
-![NotaQ Kasir Preview](docs/preview.png)
+<center><img width="1366" height="620" alt="NOTAQ1" src="https://github.com/user-attachments/assets/1cde45cf-6b95-44be-a983-3c66a016ee79" /></center>
+
 
 ---
 
@@ -19,6 +19,8 @@
 - Keranjang belanja real-time
 - Pembayaran **Tunai** (dengan kalkulasi kembalian)
 - Pembayaran **QRIS Dinamis** — QR Code ter-generate otomatis dengan nominal transaksi
+
+<center><img width="1365" height="614" alt="NOTAQ2" src="https://github.com/user-attachments/assets/05103ce6-f6c9-48ef-ba87-46c449714f6c" /></center>
 
 ### 📦 Manajemen Produk & Stok
 - CRUD produk lengkap (nama, barcode, harga beli/jual, stok, kategori)
@@ -36,6 +38,8 @@
 - Laporan penjualan harian/periode
 - Laporan stok produk
 - Laporan keuntungan (selisih harga beli vs jual)
+
+<center><img width="1365" height="617" alt="NOTAQ3" src="https://github.com/user-attachments/assets/d410a76e-93bc-43e3-808c-1f2bf0006b9c" /></center>
 
 ### 👤 Manajemen User & Role
 | Role    | Akses                                              |
@@ -77,8 +81,8 @@
 
 ```bash
 # 1. Clone repository
-git clone https://github.com/saputrabudi/notaq-kasir.git
-cd notaq-kasir
+[git clone https://github.com/saputrabudi/notaq-kasir.git](https://github.com/saputrabudi/NotaQ-Kasir-Point-of-Sale-POS-App.git)
+cd NotaQ-Kasir-Point-of-Sale-POS-App-main
 
 # 2. Install dependencies
 npm install
@@ -145,7 +149,7 @@ notaq-kasir/
 ## 💳 Cara Penggunaan QRIS Payment
 
 <!-- Ganti gambar di bawah dengan screenshot halaman QRIS Setting -->
-![QRIS Setting](docs/qris-setting.png)
+<center><img width="1365" height="614" alt="NOTAQ5" src="https://github.com/user-attachments/assets/12d44198-a804-42e1-ad49-32309307c6a8" /></center>
 
 1. Login sebagai **Admin**
 2. Buka menu **Pengaturan Payment**
@@ -157,22 +161,6 @@ notaq-kasir/
 8. Customer scan QR, kasir konfirmasi **"Sudah Bayar"**
 
 ---
-
-## 📸 Screenshot
-
-<!-- Upload screenshot ke folder docs/ lalu sesuaikan nama file -->
-
-| Halaman | Preview |
-|---------|---------|
-| Login | ![Login](docs/login.png) |
-| Dashboard | ![Dashboard](docs/dashboard.png) |
-| POS Kasir | ![POS](docs/pos.png) |
-| Modal QRIS | ![QRIS](docs/qris-modal.png) |
-| Laporan | ![Laporan](docs/laporan.png) |
-| Pengaturan QRIS | ![Setting](docs/qris-setting.png) |
-
----
-
 ## 💡 Catatan Teknis
 
 - **sql.js** digunakan sebagai pengganti `better-sqlite3` agar kompatibel dengan Node.js versi terbaru tanpa perlu compile native module.
@@ -186,9 +174,7 @@ notaq-kasir/
 Jika aplikasi ini bermanfaat, dukung pengembangan dengan donasi melalui QRIS:
 
 <!-- Upload gambar QRIS donasi ke docs/qris-donasi.png -->
-<p align="center">
-  <img src="docs/qris-donasi.png" alt="QRIS Donasi Saputra Budi" width="250">
-</p>
+<center><img width="1137" height="1600" alt="DANA QRIS" src="https://github.com/user-attachments/assets/93d08cea-177a-44ad-99d3-9038821ee53e" /></center>
 
 <p align="center">
   <strong>Scan untuk Donasi</strong><br>
@@ -218,5 +204,5 @@ ISC License — bebas digunakan dan dimodifikasi untuk kebutuhan pribadi maupun 
 ---
 
 <p align="center">
-  Made with ❤️ by <strong>Saputra Budi</strong>
+  for UMKM Indonesia by <strong>Saputra Budi</strong>
 </p>
